@@ -20,16 +20,19 @@ public class LandGenerator : MonoBehaviour
     [SerializeField]
     BuyLandHandler buyLand;
 
-    GameObject[,] landItems;
+    [SerializeField]
+    TMP_InputField newLandName;
+
+    LandItem[,] landItems;
 
     // Start is called before the first frame update
     void Start()
     {
-        buyLand.OnCheck();
+        buyLand.onLandDataChange += OnFetchAllLandData;
 
         GetComponent<GridLayoutGroup>().constraintCount = landSizeCount;
 
-        landItems = new GameObject[landSizeCount, landSizeCount];
+        landItems = new LandItem[landSizeCount, landSizeCount];
 
         for (int i = 0; i < landSizeCount; i++)
         {
@@ -39,12 +42,23 @@ public class LandGenerator : MonoBehaviour
             }
         }
 
-        FirebaseFirestore.GetDocumentsInCollection("userLandDetails", this.name, "FetchAllLandData", "FailFetchLandData");
+        buyLand.OnLandUpdate();
     }
 
-    public void FetchAllLandData(string data)
+    private void OnDestroy()
     {
+        buyLand.onLandDataChange -= OnFetchAllLandData;
+    }
 
+    public void OnFetchAllLandData(List<LandTokenData> landTokens)
+    {
+        FirebaseFirestore.GetDocumentsInCollection("userLandDetails", "", "LogSuccess", "LogError");
+        Debug.Log(landTokens.Count);
+
+        foreach (LandTokenData token in landTokens)
+        {
+            landItems[token.x, token.y].OnItemUpdate(token.landName + "\n" + token.x + ":" + token.y, Color.red);
+        }
     }
 
     public void FailFetchLandData(string data)
@@ -66,12 +80,13 @@ public class LandGenerator : MonoBehaviour
 
     void CreateLand(int i, int j)
     {
-        GameObject landInstance = Instantiate(landPrefab, transform);
-        landInstance.GetComponentInChildren<TextMeshProUGUI>().text = i + " : " + j;
-        Button landButton = landInstance.GetComponent<Button>();
-        landButton.onClick.RemoveAllListeners();
-        landButton.onClick.AddListener(() => {
-            buyLand.BuyLand(i, j);
+        LandItem landInstance = Instantiate(landPrefab, transform).GetComponent<LandItem>();
+        landInstance.OnItemUpdate(i + " : " + j, Color.white);
+        landInstance.itemButton.onClick.RemoveAllListeners();
+        landInstance.itemButton.onClick.AddListener(() => {
+            string landName = string.IsNullOrEmpty(newLandName.text) ? "ExampleLand" : newLandName.text;
+            // name should be taken from a dialog input box?
+            buyLand.BuyLand(i, j, landName);
         });
         landItems[i,j] = landInstance;
     }
