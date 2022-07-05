@@ -56,7 +56,6 @@ public class LandGenerator : MonoBehaviour
 
         foreach (LandTokenData token in landTokens)
         {
-            Debug.Log(token.x + " " + token.y);
             landItems[token.x, token.y].OnItemUpdate(token.landName + "\n" + token.x + ":" + token.y, Color.red);
         }
     }

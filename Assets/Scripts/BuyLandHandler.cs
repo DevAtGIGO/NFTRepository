@@ -144,16 +144,15 @@ public class BuyLandHandler : MonoBehaviour
             landString = landString.Trim(']');
 
             string[] landDetails = landString.Replace("\"", "").Split(',');
-            Debug.Log("0:" + landDetails[0] + " 1:" + landDetails[1] + " 2:" + landDetails[2] + " 3:" + landDetails[3]);
 
             int xPos = 0;
-            Int32.TryParse(landDetails[1], out xPos);
+            int.TryParse(landDetails[1], out xPos);
 
             int yPos = 0;
-            Int32.TryParse(landDetails[2], out yPos);
+            int.TryParse(landDetails[2], out yPos);
 
             int tokenId = 0;
-            Int32.TryParse(landDetails[3], out tokenId);
+            int.TryParse(landDetails[3], out tokenId);
 
             LandTokenData landToken = new LandTokenData(landDetails[0], xPos, yPos, tokenId);
             landData.Add(landToken);
