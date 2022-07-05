@@ -1155,26 +1155,26 @@ var tempDouble;
 var tempI64;
 
 var ASM_CONSTS = {
- 4131544: function() {
+ 4131528: function() {
   Module["emscripten_get_now_backup"] = performance.now;
  },
- 4131599: function($0) {
+ 4131583: function($0) {
   performance.now = function() {
    return $0;
   };
  },
- 4131647: function($0) {
+ 4131631: function($0) {
   performance.now = function() {
    return $0;
   };
  },
- 4131695: function() {
+ 4131679: function() {
   performance.now = Module["emscripten_get_now_backup"];
  },
- 4131750: function() {
+ 4131734: function() {
   return Module.webglContextAttributes.premultipliedAlpha;
  },
- 4131811: function() {
+ 4131795: function() {
   return Module.webglContextAttributes.preserveDrawingBuffer;
  }
 };
@@ -16530,6 +16530,17 @@ function invoke_jjji(index, a1, a2, a3, a4, a5) {
  }
 }
 
+function invoke_jiji(index, a1, a2, a3, a4) {
+ var sp = stackSave();
+ try {
+  return dynCall_jiji(index, a1, a2, a3, a4);
+ } catch (e) {
+  stackRestore(sp);
+  if (e !== e + 0 && e !== "longjmp") throw e;
+  _setThrew(1, 0);
+ }
+}
+
 function invoke_viiiiiiifjjfii(index, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15) {
  var sp = stackSave();
  try {
@@ -16765,17 +16776,6 @@ function invoke_viijiiiiii(index, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10) {
  var sp = stackSave();
  try {
   dynCall_viijiiiiii(index, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
- } catch (e) {
-  stackRestore(sp);
-  if (e !== e + 0 && e !== "longjmp") throw e;
-  _setThrew(1, 0);
- }
-}
-
-function invoke_jiji(index, a1, a2, a3, a4) {
- var sp = stackSave();
- try {
-  return dynCall_jiji(index, a1, a2, a3, a4);
  } catch (e) {
   stackRestore(sp);
   if (e !== e + 0 && e !== "longjmp") throw e;

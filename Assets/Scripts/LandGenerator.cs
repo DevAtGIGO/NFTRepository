@@ -53,10 +53,10 @@ public class LandGenerator : MonoBehaviour
     public void OnFetchAllLandData(List<LandTokenData> landTokens)
     {
         FirebaseFirestore.GetDocumentsInCollection("userLandDetails", "", "LogSuccess", "LogError");
-        Debug.Log(landTokens.Count);
 
         foreach (LandTokenData token in landTokens)
         {
+            Debug.Log(token.x + " " + token.y);
             landItems[token.x, token.y].OnItemUpdate(token.landName + "\n" + token.x + ":" + token.y, Color.red);
         }
     }
@@ -88,6 +88,7 @@ public class LandGenerator : MonoBehaviour
             // name should be taken from a dialog input box?
             buyLand.BuyLand(i, j, landName);
         });
+        landInstance.name = "Land_" + i + "_" + j;
         landItems[i,j] = landInstance;
     }
 
