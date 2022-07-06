@@ -240,7 +240,7 @@ public class LoginController : MonoBehaviour
         else
         {
             // Connection successful
-            PlayerPrefs.SetString("Account", account);
+            PlayerPrefs.SetString("Account", account.ToUpper());
             SetConnectAccount(account);
 
             WalletDetails newWallet = new WalletDetails(account);

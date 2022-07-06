@@ -1,3 +1,4 @@
+using DG.Tweening;
 using FirebaseWebGL.Scripts.FirebaseBridge;
 using System;
 using System.Collections;
@@ -23,11 +24,23 @@ public class LandGenerator : MonoBehaviour
     [SerializeField]
     TMP_InputField newLandName;
 
+    [SerializeField]
+    CanvasGroup ownedLandCanvas;
+
+    [SerializeField]
+    CanvasGroup enemyLandCanvas;
+
+
     LandItem[,] landItems;
+    string web3account;
 
     // Start is called before the first frame update
     void Start()
     {
+        ownedLandCanvas.alpha = 0;
+        enemyLandCanvas.alpha = 0;
+
+        web3account = PlayerPrefs.GetString("Account").ToUpper();
         buyLand.onLandDataChange += OnFetchAllLandData;
 
         GetComponent<GridLayoutGroup>().constraintCount = landSizeCount;
@@ -52,12 +65,46 @@ public class LandGenerator : MonoBehaviour
 
     public void OnFetchAllLandData(List<LandTokenData> landTokens)
     {
+        // TODO: Sync up token data to firebase collection, if document doesn't exist, generate land properties
         FirebaseFirestore.GetDocumentsInCollection("userLandDetails", "", "LogSuccess", "LogError");
 
         foreach (LandTokenData token in landTokens)
         {
-            landItems[token.x, token.y].OnItemUpdate(token.landName + "\n" + token.x + ":" + token.y, Color.red);
+            bool isOwner = token.tokenOwner == web3account;
+
+            landItems[token.x, token.y].OnItemUpdate(token.landName + "\n" + token.x + ":" + token.y, isOwner ? Color.green : Color.red);
+            landItems[token.x, token.y].itemButton.onClick.RemoveAllListeners();
+
+            if(isOwner)
+            {
+                landItems[token.x, token.y].itemButton.onClick.AddListener(() =>
+                {
+                    ShowPlayerLandDetails(token);
+                });
+            } else
+            {
+                landItems[token.x, token.y].itemButton.onClick.AddListener(() =>
+                {
+                    ShowEnemyLandDetails(token);
+                });
+            }
         }
+    }
+
+    void ShowPlayerLandDetails(LandTokenData data)
+    {
+        ownedLandCanvas.DOFade(1, 0.5f);
+        enemyLandCanvas.DOFade(0, 0.5f);
+
+        ownedLandCanvas.GetComponent<OwnerLandViewer>().SetItemDetails(data);
+    }
+
+    void ShowEnemyLandDetails(LandTokenData data)
+    {
+        enemyLandCanvas.DOFade(1, 0.5f);
+        ownedLandCanvas.DOFade(0, 0.5f);
+
+        enemyLandCanvas.GetComponent<OwnerLandViewer>().SetItemDetails(data);
     }
 
     public void FailFetchLandData(string data)
