@@ -104,7 +104,7 @@ public class LandGenerator : MonoBehaviour
         enemyLandCanvas.DOFade(1, 0.5f);
         ownedLandCanvas.DOFade(0, 0.5f);
 
-        enemyLandCanvas.GetComponent<OwnerLandViewer>().SetItemDetails(data);
+        enemyLandCanvas.GetComponent<EnemyLandViewer>().SetItemDetails(data);
     }
 
     public void FailFetchLandData(string data)
